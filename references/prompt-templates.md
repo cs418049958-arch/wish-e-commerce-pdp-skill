@@ -1,108 +1,71 @@
 # 提示词模板
 
-## 目录
+按任务选用模板，仅保留相关字段。中文自然表达即可，不强制英文键值，也不把全部项目 JSON 复制进每次调用。
 
-1. 概念整屏
-2. 生产终稿
-3. 结构重建
-4. 受保护资产定向修正
-5. 短版灰版
-6. 无文案信息版
-
-## 1. 概念整屏
+## 新生成／参考延展
 
 ```text
-Asset: 电商详情页第 <NN> 屏概念稿
-Goal: <唯一传播目标>
-Planning source: <页码/区域>
-Creative mechanism: <不可丢失机制>
-Scene layout: <区域和阅读动线>
-Hero action: <核心动作>
-Entity count exact: <对象=准确数量>
-Connection graph: <对象A → 关系 → 对象B>
-Anchors and shared axes: <位置与共轴对象>
-Entry/exit ports: <跨屏接口；没有写 none>
-Visual hierarchy: <第一/第二/第三主体>
-Evidence: <证据形式>
-Style DNA: <完整视觉 DNA，不写“沿用某方案”>
-Product identity: <原始产品图为真值>
-Exact copy: <逐字文案>
-Forbidden entities: <禁止对象>
-Forbidden substitutions: <禁止通用版式>
-Output: 一张完整扁平化概念整屏，用于确认构图、场景、材质和视觉语言
+任务：电商详情页第 NN 屏，[新生成／参考延展]，本屏传达[目标]。
+参考图：[逐张说明产品身份、风格、结构、相邻屏接口的职责]。
+准确文案：[逐字列出本屏正式文案，说明主副标题与正文]。
+构图与阅读：[主体层级、文字留白、镜头与场景；复杂动作才写数量与连接关系]。
+字体：[首屏创意标题／内页常规字体，层级、位置、颜色]。
+视觉：[与确认稿相关的色彩、材质、光线、景深、Icon 语言]。
+产品：[SKU、数量、大小关系、包装与允许角度]。
+衔接：[上边界、下边界与相邻屏的承接，单屏无此要求则省略]。
+必须保留：[事实和已确认设计]。
+避免：[本项目明确禁止项、容易发生的具体错误]。
+输出：[一张独立整屏、目标比例；像素尺寸以工具能力与实际返回核对]。
 ```
 
-## 2. 生产终稿
+## 已有素材直接排版
+
+先制定资产使用清单，执行实际复用。
+```text
+使用原图[资产]作为第 NN 屏的场景，保持[完整场景／指定产品位置]。
+本次只在[允许区域]安排[准确文字与 UI]；裁切与缩放范围是[范围]。
+维持[原产品与关键内容]，上下以[底色／留白／过渡区]衔接。
+若必须改变图像内容才能完成，先指出具体冲突，不将原场景重绘。
+```
+这里的排版说明不是要求整图再生成。需要局部修改时另走编辑模板。
+
+## 局部修改
 
 ```text
-Asset: 电商详情页第 <NN> 屏生产终稿
-Use approved concept: <已确认概念稿>
-Planning contract: <完整结构合同>
-Style DNA: <完整视觉 DNA>
-Protected assets: <正式中文、数字、Logo、包装、报告、关键Icon>
-Scene generation: 使用 ImageGen 完成已确认的场景、人物、管道、材质、光影和装饰
-Asset integrity: 受保护资产以用户原图或确定性复现为真值；不得重写、重绘、猜测或新增
-Output: 最终扁平 PNG；即使制作过程分层，交付不要求可编辑分层
-QA: 先结构、再视觉、最后逐字内容与产品身份
-Avoid: 假文字、错误数字、假Logo、虚构报告、包装漂移、普通字体/Icon、第二结构
+编辑底图：[当前指定或确认版本]。
+本次修改：[对象、区域、目标变化；可包含用户要求的同类相关项]。
+辅助参考：[仅说明新参考控制的属性，例如包装标签，不控制拍摄角度]。
+保留：[产品数量、位置、角度、其他文案、场景、光影、画布和排版等具体不变量]。
+只在必要区域编辑；不要扩展为整页重设计。
+```
+调用后逐项检查修改结果和保留项。提示词不变量是目标，不是像素保真的证明。
+
+## 复杂结构
+
+在新生成或编辑模板后按需增加：
+```text
+关键对象数量：[明确数量]。
+必需关系：[对象 A 必须连接／处于／流向对象 B]。
+关键轴线或锚点：[只写实际需要的]。
+跨屏接口：[实际对象、边缘、横向位置、宽度、方向、材质]。
+禁止的结构替代：[例：不得把唯一 U 型管变成两根独立展示管]。
+```
+先判断可局部修复还是必须重建；结构已失效时才从策划源重建，不沿用错误关系。
+
+## 短版灰版
+
+```text
+图1为灰版，锁定原尺寸、两侧全高白边、模块坐标、间距、圆角、文字与 UI 样式。
+仅填充[允许区域]，内容为[场景、产品、动作与数量]。
+图2控制产品身份。其他参考各自职责为[职责]。
+不得让场景越界、遮挡文字或改变白边。保持原布局。
 ```
 
-工具环境只能整屏 ImageGen 时，补充：
+## 去文案
 
 ```text
-Render all content in one flattened result, but treat every protected asset as immutable. Change no supplied character, number, logo, package label, report detail, or already-approved icon. If any protected item cannot be preserved exactly, return a new concept candidate rather than claiming production approval.
-```
-
-## 3. 结构重建
-
-用于对象数量、连接、中心轴、人物动作或策划构图错误：
-
-```text
-Rebuild from source; do not edit the rejected image as the structural base.
-Source of truth: <策划源页> + <产品身份> + <视觉DNA>
-Exact entity counts: <对象数量>
-Required topology: <连接图>
-Shared axes and anchors: <位置>
-Forbidden entities: <第二根管、支管、第二出口等>
-Keep visual DNA: <标题、Icon、材质、光线、色彩和信息密度完整规则>
-Protected assets: <不得漂移内容>
-Reject if: 数量、接口、轴线、视觉DNA或受保护资产任一错误
-```
-
-## 4. 受保护资产定向修正
-
-仅用于单个文字、数字、Logo、包装或报告错误：
-
-```text
-Edit target: 第 <NN> 屏
-Change only: <唯一受保护资产>
-Keep unchanged: 构图、对象数量、连接拓扑、产品位置、场景、光线、色板、标题、其他文案、其他数字、Icon和报告
-Verify after edit: 列出全部受保护资产并逐项复核，不只检查本次修改项
-Avoid: 重画整屏、改变其他字符、增加脚注、生成机构/编号/印章、风格降级
-```
-
-如果定向修正导致任何其他受保护资产漂移，撤销该候选并改用确定性资产合成或重新生成。
-
-## 5. 短版灰版
-
-```text
-Image 1: 短版灰版，像素级版式母版
-Image 2: 产品身份真值
-Lock canvas: 原宽高和比例
-Lock gutters: 两侧白边全高保留，宽度、颜色、位置不变
-Lock layout: 模块顺序、坐标、圆角、间距、Logo、标题、文字、数字、Icon、脚注和样式不变
-Planning contract per module: <对象数量、动作、空间关系>
-Fill only: <允许填充区域和内容>
-Avoid: 改画布、删白边、重排、改字、场景越界、遮挡文案、漏掉策划机制
-```
-
-## 6. 无文案信息版
-
-仅在完整设计确认且用户明确需要后：
-
-```text
-Keep unchanged: 原画布、白边、背景、模块结构、产品、包装原生Logo/文字、场景、人物/手部动作、使用演示、材质、光影
-Remove only: 页面排版标题、正文、数字、卖点、角标、Icon、脚注、步骤标签和说明
-Output: 与确认稿构图一致的无文案信息版
-Avoid: 删除产品、包装信息或场景；重排模块；改尺寸；生成假字
+编辑[指定版本]，只删除页面排版文字：[实际标题、正文、数字等范围]。
+保留产品与包装原生文字、Logo、场景、原尺寸和布局。
+Icon 与 UI：[根据用户要求明确保留或删除，默认保留图形；特别指定“UI保留”时连同原界面文字保留，除非另有指示]。
+自然修补文字原区域，不出现残字或新增文字。
 ```

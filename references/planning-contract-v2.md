@@ -1,113 +1,101 @@
-# 策划生产合同 V2
+# 屏序与结构清单（V3，保留原文件路径）
 
-## 目录
+多屏项目用 JSON 清单保持素材、版本和交付顺序。普通单屏编辑可使用简短说明；无需为校验补造动作、连接图或无关坐标。
 
-1. 合同目的
-2. 项目字段
-3. 单屏字段
-4. 拓扑写法
-5. 第 05 屏示例
-6. 放行规则
+## 项目字段
 
-## 1. 合同目的
-
-把策划语义转换为可检查的对象数量、连接拓扑、锚点、中心轴、进出屏接口和禁止项。没有合同，不生成。
-
-## 2. 项目字段
-
-```json
-{
-  "project": "项目名",
-  "page_type": "long",
-  "style_dna_id": "B-tech-clean-v1",
-  "screens": []
-}
-```
-
-`page_type` 仅允许 `long` 或 `short-grayboard`。
-
-## 3. 单屏必填字段
-
-| 字段 | 写法 |
+| 字段 | 规则 |
 |---|---|
-| screen_id | 两位数，例如 `05` |
-| source_page_or_region | 页码、表格区域或截图位置 |
-| semantic_goal | 唯一传播目标 |
-| exact_copy | 正式文案数组；没有则 `[]` |
-| creative_mechanism | 不可替换的创意机制 |
-| scene_layout | 区域划分和阅读动线 |
-| hero_action | 核心动作 |
-| entity_count_exact | `{对象名: 准确数量}` |
-| connection_graph | `{from,to,relation}` 数组 |
-| anchor_positions | `{entity,x,y,region}`；x/y 使用 0–1 |
-| shared_axes | 必须共轴的对象数组 |
-| entry_exit_ports | 跨屏物体接口数组；没有则 `[]` |
-| primary_secondary_order | 至少 1 个视觉层级对象 |
-| evidence_presentation | 证据布局；没有则写 `none` |
-| protected_assets | 正式文字、包装、Logo、报告等 |
-| forbidden_entities | 禁止出现的对象 |
-| forbidden_substitutions | 禁止替代版式 |
-| style_dna_id | 对应视觉 DNA |
-| status | 初始为 `parsed` |
+| schema_version | 新项目写 3；未填写按旧 V2 读取 |
+| project | 项目名 |
+| page_type | long、short-grayboard 或 single |
+| task_mode | new、redesign、reuse、extend、edit、remove-copy |
+| review_mode | checkpoints 或 autonomous |
+| style_dna_id | 风格记录标识，未选定可写 pending |
+| delivery_order | 需要交付的 screen_id 数组，保持策划／用户要求顺序；不包含跳过屏 |
+| screens | 屏清单；跳过屏可用最小记录保留来源 |
 
-不要用“若干、适量、大概、类似”等模糊词描述关键对象。
+## 普通屏核心字段
 
-## 4. 拓扑写法
+| 字段 | 规则 |
+|---|---|
+| screen_id | 两位数或以上的数字字符串，唯一；保留原编号可有跳号 |
+| source_page_or_region | 页码、区域或文件名 |
+| semantic_goal | 本屏主要传播目标 |
+| exact_copy | 逐字文案数组；纯图为 [] |
+| asset_plan | 数组，每项含 asset_id、source、use_policy、role；无现成素材可为空 |
+| entity_count_exact | 必须准确的关键对象数量，例如每款产品；无产品／关键对象时可为 {} |
+| primary_secondary_order | 视觉主次描述数组，至少一项 |
+| style_dna_id | 与项目一致 |
+| status | parsed、ready、generated、repair、qa_passed、user_approved、final、skipped；兼容 V2 旧状态 |
+| final_file | 准备正式拼接时必填，终稿目录内的文件名，如 02-scene-v3.png |
+| transition | 可选，描述与下一交付屏的衔接；长版需实际规划，首尾按需要描述 |
 
-- `connected_to`：必须物理连接。
-- `aligned_center_x`：必须共用垂直中心轴。
-- `inside`：对象必须位于另一对象内部。
-- `flows_to`：液体、粒子或动势方向。
-- `surrounds`：证书、菌种或卖点围绕主体。
-- `above/below/left_of/right_of`：明确相对位置。
-- `continues_to_next_screen`：从本屏边缘延续到下一屏。
+asset_plan.use_policy 取 direct-use、editable、reference、identity、approved-base、grayboard。
+直接使用的素材不因写入提示词就算已复用；仍需检查成图来源和保留区域。
+跳过屏最小记录为 screen_id、source_page_or_region、status=skipped。被跳过屏不得出现在 delivery_order。
 
-锚点不是精确设计坐标，而是验收容差基准。中心轴类关系默认允许画布宽度 2% 以内误差；跨屏接口默认允许 1%。
+## 条件字段
 
-## 5. 第 05 屏示例
+structural_requirements 是可选数组，仅列出本屏实际需要的约束：
+
+- connections：要求非空 connection_graph，每项有 from、to、relation。
+- anchors：要求非空 anchor_positions，每项有 entity、x、y、region，x/y 位于 0–1。
+- axes：要求非空 shared_axes，每组至少两个对象名称。
+- ports：要求非空 entry_exit_ports，每项有 continuity_group、object、from_screen、to_screen、edge_from、edge_to、normalized_x、diameter_or_width_ratio、material、lighting、direction、occlusion_forbidden。
+
+端口从前一屏 bottom 到相邻交付屏 top，横向位置 0–1，宽度比例大于 0 且不大于 1。管道、动作与连接关系来自策划，不能为了简化字段而漏标确实需要的约束。
+可额外记录 creative_mechanism、scene_layout、hero_action、protected_assets、evidence_presentation、forbidden_entities、forbidden_substitutions。没有实际要求时省略。
+
+## 精简示例
 
 ```json
 {
-  "screen_id": "05",
-  "source_page_or_region": "策划长图第05段",
-  "semantic_goal": "透明啫喱溶解毛发并恢复畅通",
-  "exact_copy": ["3分钟起效"],
-  "creative_mechanism": "产品倒入浴室地漏，地漏下方唯一一根透明U型管展示同一流向内的包裹、断裂、溶解",
-  "scene_layout": "上部真实浴室地漏操作，下部透明管道剖面，报告位于侧边",
-  "hero_action": "产品液体从地漏进入同一根U型管",
-  "entity_count_exact": {
-    "floor_drain": 1,
-    "transparent_u_pipe": 1,
-    "product": 1,
-    "report_card": 1
-  },
-  "connection_graph": [
-    {"from": "floor_drain", "to": "vertical_inlet", "relation": "connected_to"},
-    {"from": "vertical_inlet", "to": "transparent_u_pipe", "relation": "connected_to"},
-    {"from": "hair", "to": "transparent_u_pipe", "relation": "inside"},
-    {"from": "clear_gel", "to": "transparent_u_pipe", "relation": "flows_to"}
-  ],
-  "anchor_positions": [
-    {"entity": "floor_drain", "x": 0.5, "y": 0.34, "region": "upper"},
-    {"entity": "transparent_u_pipe", "x": 0.5, "y": 0.67, "region": "lower"}
-  ],
-  "shared_axes": [["floor_drain", "vertical_inlet", "transparent_u_pipe.inlet"]],
-  "entry_exit_ports": [],
-  "primary_secondary_order": ["transparent_u_pipe", "product_action", "report_card"],
-  "evidence_presentation": "侧边轻量毛玻璃证据卡；无机构、编号、印章",
-  "protected_assets": ["产品包装", "3分钟起效", "报告真实内容"],
-  "forbidden_entities": ["second_pipe", "branch_pipe", "second_outlet", "floating_product"],
-  "forbidden_substitutions": ["双管过程分镜", "孤立展示管", "普通圆贴徽章"],
-  "style_dna_id": "B-tech-clean-v1",
-  "status": "parsed"
+  "schema_version": 3,
+  "project": "香氛合集详情页",
+  "page_type": "long",
+  "task_mode": "reuse",
+  "review_mode": "checkpoints",
+  "style_dna_id": "approved-kv-b2",
+  "delivery_order": ["01", "02"],
+  "screens": [
+    {
+      "screen_id": "01",
+      "source_page_or_region": "已确认首屏",
+      "semantic_goal": "介绍三款香型",
+      "exact_copy": [],
+      "asset_plan": [{"asset_id": "kv-b2", "source": "01-approved.png", "use_policy": "approved-base", "role": "确认首屏"}],
+      "entity_count_exact": {"strawberry": 1, "lemon": 1, "avocado": 1},
+      "primary_secondary_order": ["确认首屏原版"],
+      "style_dna_id": "approved-kv-b2",
+      "status": "user_approved",
+      "final_file": "01-approved.png"
+    },
+    {
+      "screen_id": "02",
+      "source_page_or_region": "策划第2段",
+      "semantic_goal": "表达对应香型的使用氛围",
+      "exact_copy": [],
+      "asset_plan": [{"asset_id": "scene-2", "source": "existing-scene.png", "use_policy": "direct-use", "role": "直接排版的场景"}],
+      "entity_count_exact": {"lemon": 1},
+      "primary_secondary_order": ["产品", "场景"],
+      "style_dna_id": "approved-kv-b2",
+      "status": "parsed",
+      "transition": "承接首屏底部暖白背景"
+    },
+    {"screen_id": "03", "source_page_or_region": "用户本次排除的资料屏", "status": "skipped"}
+  ]
 }
 ```
 
-## 6. 放行规则
+示例用于说明格式，实际 exact_copy 必须来自项目资料。准备交付时补全所选屏的 final_file 并记录真实状态。
 
-- 对象数量与 `entity_count_exact` 不一致：失败。
-- `connection_graph` 任一连接缺失或错位：失败。
-- `shared_axes` 明显偏移：失败。
-- 禁止对象出现：失败。
-- 用通用卡片或分镜替代策划机制：失败。
-- 合同字段只写在提示词但没有成图反查记录：失败。
+## 校验与拼接
+
+```bash
+python scripts/validate_screen_manifest.py --manifest screen-manifest.json
+python scripts/stitch_screens.py --input-dir 03-final-screens --output long.png --screen-manifest screen-manifest.json --manifest stitch-report.json
+```
+
+首个脚本检查清单完整性和条件结构字段，不能识别成图中的物理关系、文字或审美。
+拼接按 delivery_order 与 final_file 读取实际文件，拒绝额外旧稿、遗漏和不一致尺寸；默认不缩放。用户要求调整输出宽度时才使用 --resize，并再次检查文字可读性。

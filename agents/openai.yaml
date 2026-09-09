@@ -1,11 +1,13 @@
 interface:
-  display_name: "Wish 电商详情页设计"
-  short_description: "用结构合同、视觉DNA与三轮QA制作长短版详情页"
-  default_prompt: "使用 $wish-e-commerce-pdp-skill 逐页读取策划稿，把对象数量、连接拓扑、跨屏接口和视觉DNA锁定后，再制作并验收长版或短版电商详情页。"
+  display_name: Wish 电商详情页设计
+  short_description: 统筹创意与素材复用，使用内置生图制作连贯、准确的长短版详情页
+  default_prompt: 使用 $wish-e-commerce-pdp-skill 根据策划与已有素材设计电商详情页，先明确素材复用与屏序，再统筹首屏创意、内页字体、产品准确性和跨屏过渡，按约定节点生成、检查并交付。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
 policy:
   products:
-    - "chatgpt"
-    - "codex"
-    - "api"
-    - "atlas"
+  - chatgpt
+  - codex
+  - api
+  - atlas
   allow_implicit_invocation: true
