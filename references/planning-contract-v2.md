@@ -32,6 +32,8 @@
 | transition | 可选，描述与下一交付屏的衔接；长版需实际规划，首尾按需要描述 |
 
 asset_plan.use_policy 取 direct-use、editable、reference、identity、approved-base、grayboard。
+逐屏从策划和参考图提取的指定画面机制、动作、空间关系可记录在 creative_mechanism、hero_action、scene_layout 等可选字段；不为普通静物屏填造结构约束。右侧批注、箭头和参考图区块的作用写入对应素材 role 或 source_page_or_region，避免只读取左侧文案。
+用户确认稿可在该屏记录 approved_file、approved_version、protected_assets；新候选另存，用户要求改确认稿时待复核版本不能取代原确认信息。最终交付用 final_file 指向实际选中的版本，status 区分 user_approved 与自主验收的 final。
 直接使用的素材不因写入提示词就算已复用；仍需检查成图来源和保留区域。
 跳过屏最小记录为 screen_id、source_page_or_region、status=skipped。被跳过屏不得出现在 delivery_order。
 
